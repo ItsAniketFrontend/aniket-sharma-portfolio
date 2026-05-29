@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. One theme, one accent (consistency locked), one radius system.
+  Palette rotated away from AI-purple glow and beige-craft defaults:
+  near-black ink + bone neutrals + a single saturated vermilion pop.
+*/
+@theme {
+  --color-ink: #0a0a0b;
+  --color-ink-2: #111114;
+  --color-surface: #16161a;
+  --color-surface-2: #1d1d22;
+  --color-bone: #ece8e1;
+  --color-bone-dim: #b9b6b0;
+  --color-muted: #8a8a90;
+  --color-line: #26262c;
+  --color-flame: #ff4a24;
+  --color-flame-soft: #ff6a4a;
+
+  --font-display: "Cabinet Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background-color: var(--color-flame);
+    color: #0a0a0b;
+  }
+  /* Accent-tinted focus ring, no neon glow */
+  :focus-visible {
+    outline: 2px solid var(--color-flame);
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Hairline borders instead of glows */
+  .hairline {
+    border: 1px solid var(--color-line);
+  }
+  .grain {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgba(236, 232, 225, 0.035) 1px,
+      transparent 0
+    );
+    background-size: 4px 4px;
+  }
+}
+
+/* Single marquee on the page (taste-skill: max one per page) */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee-x 32s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+}
