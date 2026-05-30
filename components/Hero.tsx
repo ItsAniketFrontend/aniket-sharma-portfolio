@@ -23,7 +23,7 @@ export default function Hero() {
             Web &amp; App Developer
           </span>
 
-          <h1 className="hero-rise mt-6 font-display text-[clamp(2.6rem,7vw,5.2rem)] font-extrabold leading-[0.98] text-balance">
+          <h1 className="hero-title mt-6 font-display text-[clamp(2.6rem,7vw,5.2rem)] font-extrabold leading-[0.98] text-balance">
             I design and ship web and app products people actually
             <span className="text-flame"> use</span>.
           </h1>
@@ -47,7 +47,7 @@ export default function Hero() {
             <HeroCanvas />
           </div>
           <div className="pointer-events-none absolute bottom-2 left-0 right-0 flex items-end justify-between px-1">
-            <p className="text-sm text-muted">Drag your cursor across it</p>
+            <p className="text-sm text-muted">Say hi, it follows your cursor</p>
             <span className="rounded-[var(--radius-pill)] bg-ink/70 px-3 py-1 text-xs text-bone backdrop-blur hairline">
               Open to work
             </span>

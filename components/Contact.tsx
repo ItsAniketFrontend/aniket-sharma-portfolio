@@ -4,7 +4,7 @@ export default function Contact() {
   return (
     <section id="contact" className="px-4 py-28 md:py-40">
       <div className="mx-auto max-w-4xl text-center">
-        <h2 className="flip-up font-display text-[clamp(2.4rem,7vw,5rem)] font-extrabold leading-[0.98] text-balance">
+        <h2 className="split-reveal font-display text-[clamp(2.4rem,7vw,5rem)] font-extrabold leading-[0.98] text-balance">
           Have something worth
           <span className="text-flame"> building</span>?
         </h2>

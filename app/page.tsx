@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { SplitText } from "gsap/SplitText";
 
 import { heroScroll, pageScroll } from "@/lib/scroll";
 import SceneBackgroundCanvas from "@/components/SceneBackgroundCanvas";
@@ -17,7 +19,7 @@ import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
-gsap.registerPlugin(ScrollTrigger, useGSAP);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText, useGSAP);
 
 export default function Page() {
   const root = useRef<HTMLDivElement>(null);
@@ -36,6 +38,33 @@ export default function Page() {
           ease: "power3.out",
           stagger: 0.09,
           delay: 0.1,
+        });
+
+        // SplitText: hero headline reveals character by character behind a mask.
+        const title = document.querySelector<HTMLElement>(".hero-title");
+        if (title) {
+          const split = SplitText.create(title, { type: "words,chars", mask: "chars" });
+          gsap.from(split.chars, {
+            yPercent: 120,
+            opacity: 0,
+            stagger: 0.016,
+            duration: 0.7,
+            ease: "power3.out",
+            delay: 0.15,
+          });
+        }
+
+        // SplitText: closing headline reveals line by line on scroll.
+        gsap.utils.toArray<HTMLElement>(".split-reveal").forEach((el) => {
+          const split = SplitText.create(el, { type: "lines,words", mask: "lines" });
+          gsap.from(split.lines, {
+            yPercent: 110,
+            opacity: 0,
+            stagger: 0.12,
+            duration: 0.8,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 85%" },
+          });
         });
 
         // Scroll reveals, triggered per element as it enters.
@@ -230,6 +259,28 @@ export default function Page() {
     },
     { scope: root }
   );
+
+  // Smooth in-page navigation with ScrollToPlugin (jumps instantly when the
+  // visitor prefers reduced motion).
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function onClick(e: MouseEvent) {
+      const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+      if (!link) return;
+      const id = link.getAttribute("href");
+      if (!id || id === "#") return;
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      gsap.to(window, {
+        duration: reduce ? 0 : 1,
+        ease: "power2.inOut",
+        scrollTo: { y: target, offsetY: 72 },
+      });
+    }
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
 
   return (
     <div ref={root}>
