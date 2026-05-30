@@ -47,7 +47,7 @@ export default function Hero() {
             <HeroCanvas />
           </div>
           <div className="pointer-events-none absolute bottom-2 left-0 right-0 flex items-end justify-between px-1">
-            <p className="text-sm text-muted">Say hi, it follows your cursor</p>
+            <p className="text-sm text-muted">Move your cursor through it</p>
             <span className="rounded-[var(--radius-pill)] bg-ink/70 px-3 py-1 text-xs text-bone backdrop-blur hairline">
               Open to work
             </span>
