@@ -190,6 +190,32 @@ export default function Page() {
         });
       });
 
+      // Pinned horizontal showcase, desktop only (mobile keeps a vertical stack).
+      mm.add(
+        "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+        () => {
+          const track = root.current?.querySelector<HTMLElement>(".work-track");
+          const section = root.current?.querySelector<HTMLElement>(".work-pin");
+          if (!track || !section) return;
+
+          const distance = () => track.scrollWidth - window.innerWidth;
+
+          gsap.to(track, {
+            x: () => -distance(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top top",
+              end: () => "+=" + distance(),
+              pin: true,
+              scrub: 1,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+        }
+      );
+
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set([".hero-rise", ".reveal", ".reveal-3d", ".flip-up"], {
           opacity: 1,

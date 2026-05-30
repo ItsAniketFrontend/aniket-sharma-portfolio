@@ -1,6 +1,4 @@
-"use client";
-
-import { useRef, useState } from "react";
+import Tilt from "./Tilt";
 
 type Project = {
   name: string;
@@ -41,95 +39,61 @@ const projects: Project[] = [
   },
 ];
 
+/*
+  Pinned horizontal showcase. On desktop the section pins and the track pans
+  sideways as you scroll (wired in page.tsx with ScrollTrigger). On mobile and
+  under reduced motion it falls back to a normal vertical stack.
+*/
 export default function Work() {
-  const [active, setActive] = useState<number | null>(null);
-  const pos = useRef({ x: 0, y: 0 });
-  const previewRef = useRef<HTMLDivElement>(null);
-
-  function onMove(e: React.MouseEvent) {
-    pos.current = { x: e.clientX, y: e.clientY };
-    if (previewRef.current) {
-      previewRef.current.style.transform = `translate(${e.clientX + 24}px, ${
-        e.clientY - 130
-      }px)`;
-    }
-  }
-
   return (
-    <section
-      id="work"
-      onMouseMove={onMove}
-      className="relative px-4 py-28 md:py-36"
-    >
-      <div className="mx-auto max-w-6xl">
-        <div className="reveal mb-14 flex items-end justify-between gap-6">
-          <div>
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted">
+    <section id="work" className="work-pin relative">
+      <div className="md:flex md:h-[100dvh] md:items-center md:overflow-hidden">
+        <div className="work-track flex flex-col gap-6 px-4 py-24 will-change-transform md:flex-row md:flex-nowrap md:gap-8 md:py-0 md:pl-[8vw] md:pr-[12vw]">
+          {/* Intro panel travels in as the first card */}
+          <div className="flex shrink-0 flex-col justify-center md:w-[36vw] lg:w-[30vw]">
+            <span className="reveal text-xs font-medium uppercase tracking-[0.18em] text-muted">
               Selected work
             </span>
-            <h2 className="flip-up mt-4 font-display text-[clamp(1.9rem,4.5vw,3.4rem)] font-bold">
+            <h2 className="flip-up mt-4 font-display text-[clamp(2rem,5vw,3.6rem)] font-bold leading-[1.04]">
               Things I have built
             </h2>
+            <p className="reveal mt-5 max-w-sm text-muted">
+              A few projects from the last couple of years. Each one shipped and
+              in the hands of real users.
+            </p>
+            <div className="reveal mt-8 flex items-center gap-3 text-sm text-flame">
+              <span className="h-px w-10 bg-flame" />
+              {projects.length} projects
+            </div>
           </div>
-          <p className="hidden max-w-xs text-sm text-muted md:block">
-            A few projects from the last couple of years. Each one shipped and
-            in the hands of real users.
-          </p>
-        </div>
 
-        <ul className="border-t border-line">
-          {projects.map((p, i) => (
-            <li key={p.name}>
-              <a
-                href="#contact"
-                onMouseEnter={() => setActive(i)}
-                onMouseLeave={() => setActive(null)}
-                className="reveal-3d group grid grid-cols-[auto_1fr_auto] items-center gap-6 border-b border-line py-7 transition-colors duration-300 hover:bg-surface/30 md:py-9"
-              >
-                <span className="font-display text-sm text-muted tabular-nums">
+          {projects.map((p) => (
+            <Tilt
+              key={p.name}
+              max={6}
+              className="work-card group flex shrink-0 flex-col overflow-hidden rounded-[var(--radius-card)] bg-surface/40 hairline md:w-[40vw] lg:w-[32vw]"
+            >
+              <div className="relative overflow-hidden">
+                <img
+                  src={`https://picsum.photos/seed/${p.seed}/800/600`}
+                  alt={p.category}
+                  className="h-56 w-full object-cover transition-transform duration-700 group-hover:scale-[1.04] md:h-72"
+                  loading="lazy"
+                />
+                <span className="absolute left-4 top-4 rounded-[var(--radius-pill)] bg-ink/70 px-3 py-1 text-xs text-bone backdrop-blur hairline">
                   {p.year}
                 </span>
-                <div className="min-w-0">
-                  <h3 className="font-display text-2xl font-bold transition-colors duration-300 group-hover:text-flame md:text-4xl">
-                    {p.name}
-                  </h3>
-                  <p className="mt-1 truncate text-sm text-muted">
-                    {p.category}
-                  </p>
-                </div>
-                <div className="flex items-center gap-6">
-                  <span className="hidden text-right text-xs text-bone-dim lg:block">
-                    {p.stack}
-                  </span>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full hairline text-bone transition-all duration-300 group-hover:border-flame group-hover:bg-flame group-hover:text-ink">
-                    ↗
-                  </span>
-                </div>
-              </a>
-            </li>
+              </div>
+              <div className="flex flex-1 flex-col p-6 md:p-7">
+                <h3 className="font-display text-2xl font-bold transition-colors duration-300 group-hover:text-flame md:text-3xl">
+                  {p.name}
+                </h3>
+                <p className="mt-2 text-sm text-muted">{p.category}</p>
+                <p className="mt-auto pt-5 text-xs text-bone-dim">{p.stack}</p>
+              </div>
+            </Tilt>
           ))}
-        </ul>
-      </div>
-
-      {/* Cursor-following preview. Motivated: previews the work without leaving the list. */}
-      <div
-        ref={previewRef}
-        aria-hidden
-        className={`pointer-events-none fixed left-0 top-0 z-40 hidden h-64 w-80 overflow-hidden rounded-[var(--radius-card)] hairline transition-opacity duration-300 md:block ${
-          active !== null ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        {projects.map((p, i) => (
-          <img
-            key={p.seed}
-            src={`https://picsum.photos/seed/${p.seed}/640/512`}
-            alt=""
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ${
-              active === i ? "opacity-100" : "opacity-0"
-            }`}
-            loading="lazy"
-          />
-        ))}
+        </div>
       </div>
     </section>
   );
